@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/templates/modeloGeral.xhtml">
+
+	<ui:define name="conteudo">
+	<f:event listener="#{usuarioMB.carregarLista}" type="preRenderView"></f:event>
+		<h:form id="form">
+
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Clientes" />
+				</f:facet>
+			</p:toolbar>
+			<p:panel id="panel">
+			<p:fieldset id="dadosPessoais" legend="Dados Pessoais">
+				<h:panelGrid id ="dadosClientePessoais" columns="2">
+					
+					<p:outputLabel value="Nome:"/>
+					<p:inputText maxlength="30" size="32"
+						value="#{usuarioMB.usuario.nome}" required="true"
+						requiredMessage="Preencha o campo Nome" />
+					
+					<p:outputLabel value="CPF"/>
+					<p:inputMask maxlength="11" size="14"
+						value="#{usuarioMB.usuario.cpf}" mask="999.999.999-99"
+						required="true" requiredMessage="Preencha o campo CPF" />
+					
+					<p:outputLabel value="Telefone:"/>
+					<p:inputMask maxlength="11" size="14"
+						value="#{usuarioMB.usuario.telefone}" mask="(99)9999-9999"
+						required="true" requiredMessage="Preencha o campo Telefone" />
+					
+					<p:outputLabel value="Celular/WhatsAPP"/>
+					<p:inputMask maxlength="11" size="14"
+						value="#{usuarioMB.usuario.telefoneWhatsapp}"
+						mask="(99)99999-9999" required="true"
+						requiredMessage="Preencha o campo Celular" />
+					
+					<p:outputLabel value="Perfil do Usuário"/>
+					<p:selectOneMenu id="perfil" value="#{usuarioMB.usuario.perfil}"
+						style="width:125px">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Administrador" itemValue="Administrador" />
+						<f:selectItem itemLabel="Usuario" itemValue="Usuario" />
+					</p:selectOneMenu>
+						
+				</h:panelGrid>
+			</p:fieldset>
+			
+			<p:fieldset id="dadosEndereco" legend="Endereço">
+				<h:panelGrid id="dadosClienteEndereco" columns="2">
+					
+					<p:outputLabel value="Cep:"/>
+					<p:inputMask value="#{usuarioMB.endereco.cep}" required="true"
+						requiredMessage="Preencha o campo Cep" maxlength="8" size="10"
+						mask="99999-999" />
+					
+					<p:outputLabel value="Logradouro:"/>
+					<p:inputText value="#{usuarioMB.endereco.logradouro}" size="50"
+						required="false" requiredMessage="Preencha o campo logradouro" />
+					
+					<p:outputLabel value="Nº"/>
+					<p:inputMask value="#{usuarioMB.endereco.numero}" required="true"
+						requiredMessage="Preencha o campo número" maxlength="5" size="8"
+						mask="?99999" />
+					
+					<p:outputLabel value="Complemento:"/>
+					<p:inputText value="#{usuarioMB.endereco.complemento}"
+						required="false" requiredMessage="Preencha o campo complemento" />
+					
+					<p:outputLabel value="Bairro:"/>
+					<p:inputText id="bairro" value="#{usuarioMB.endereco.bairro}"
+						required="true" label="bairro"
+						requiredMessage="Preencha o campo Bairro" />
+					
+					<p:outputLabel value="Cidade:"/>
+					<p:inputText value="#{usuarioMB.endereco.cidade}" required="true"
+						requiredMessage="Preencha o campo cidade" />
+					
+					<p:outputLabel value="Estado:"/>
+					<p:selectOneMenu id="estado" value="#{usuarioMB.endereco.estado}"
+						style="width:125px">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="AC" itemValue="AC" />
+						<f:selectItem itemLabel="AL" itemValue="AL" />
+						<f:selectItem itemLabel="AP" itemValue="AP" />
+						<f:selectItem itemLabel="AM" itemValue="AM" />
+						<f:selectItem itemLabel="BA" itemValue="BA" />
+						<f:selectItem itemLabel="CE" itemValue="CE" />
+						<f:selectItem itemLabel="DF" itemValue="DF" />
+						<f:selectItem itemLabel="ES" itemValue="ES" />
+						<f:selectItem itemLabel="GO" itemValue="GO" />
+						<f:selectItem itemLabel="MA" itemValue="MA" />
+						<f:selectItem itemLabel="MT" itemValue="MT" />
+						<f:selectItem itemLabel="MS" itemValue="MS" />
+						<f:selectItem itemLabel="MG" itemValue="MG" />
+						<f:selectItem itemLabel="PA" itemValue="PA" />
+						<f:selectItem itemLabel="PB" itemValue="PB" />
+						<f:selectItem itemLabel="PR" itemValue="PR" />
+						<f:selectItem itemLabel="PE" itemValue="PE" />
+						<f:selectItem itemLabel="PI" itemValue="PI" />
+						<f:selectItem itemLabel="RJ" itemValue="RJ" />
+						<f:selectItem itemLabel="RN" itemValue="RN" />
+						<f:selectItem itemLabel="RS" itemValue="RS" />
+						<f:selectItem itemLabel="RO" itemValue="RO" />
+						<f:selectItem itemLabel="RR" itemValue="RR" />
+						<f:selectItem itemLabel="SC" itemValue="SC" />
+						<f:selectItem itemLabel="SP" itemValue="SP" />
+						<f:selectItem itemLabel="SE" itemValue="SE" />
+						<f:selectItem itemLabel="TO" itemValue="TO" />
+						
+					</p:selectOneMenu>
+				</h:panelGrid>
+			</p:fieldset>
+			
+			<p:fieldset id="dadosUsuario" legend="Usuário">
+				<h:panelGrid columns="2">
+				
+					<p:outputLabel value="E-mail"/>
+					<p:inputText id="email" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Preencha o campo email" />
+					
+					<p:outputLabel value="Senha:"/>
+					<p:password id="senha" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Preencha o campo senha" />
+					
+				 	<p:outputLabel value="Confirmar Senha:"/>
+					<p:password id="ConfirmaSenha" required="true" requiredMessage="Preencha o campo Confirmar senha" />
+					
+				</h:panelGrid>
+			</p:fieldset>
+
+				<h:panelGrid columns="2">
+					<p:commandButton id="id1" value="Salvar"
+						action="#{usuarioMB.salvar}" icon="ui-icon-check"
+						validateClient="true" ajax="false" />
+
+					<p:commandButton process="@this" value="Voltar"
+						action="/pages/public/tlLogin.xhtml?faces-redirect=true" />
+						<!-- 						update=":form:dadosPessoais:dadosClientePessoais" -->
+				</h:panelGrid>
+				
+			<p:fieldset legend="Clientes Cadastrados">
+				<p:dataTable var="usuario" value="#{usuarioMB.listarUsuarios}" id="listaUsuario"
+							emptyMessage="Nenhum registro encontrado...."
+				filteredValue="#{usuarioMB.listaUsuariosFiltrados}" rows="10" paginator="true">
+					
+					<p:column headerText="Código" filterBy="#{usuario.codigo}"
+							sortBy="#{usuario.codigo}" >
+						<h:outputText value="#{usuario.codigo}" />
+					</p:column>
+					
+					<p:column headerText="Nome" filterBy="#{usuario.nome}"
+							sortBy="#{usuario.nome}">
+						<h:outputText value="#{usuario.nome}"/>
+					</p:column>
+					
+					<p:column headerText="Cpf" filterBy="#{usuario.cpf}"
+							sortBy="#{usuario.cpf}">
+						<h:outputText value="#{usuario.cpf}"/>
+					</p:column>
+					
+					<p:column headerText="E-mail" filterBy="#{usuario.email}"
+							sortBy="#{usuario.email}">
+						<h:outputText value="#{usuario.email}"/>
+					</p:column>
+					
+				</p:dataTable>
+			</p:fieldset>
+		  </p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Market e Delivery</title>
+	<h:outputStylesheet library="css" name="estilos.css" />
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRdcsx3EG4n5nexRm9NRCf9hAmUYLEm98" />
+</h:head>
+<h:body>
+	<p:growl id="msgGlobal" sticky="true" />
+	<p:layout fullPage="true">
+
+		<p:layoutUnit header="Sistema para Gerenciamento de Compras"
+			position="north" resizable="false" closable="false"
+			collapsible="false">
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south"
+			header="Desenvolvido por Market e Delivery " resizable="false"
+			closable="false" collapsible="false">
+		</p:layoutUnit>
+
+		<p:layoutUnit position="west" size="250" resizable="false"
+			closable="false" collapsible="false">
+			<h:form>
+				<p:panelMenu>
+					<p:submenu label="Home">
+						<p:menuitem value="Principal"
+							outcome="/pages/protected/minhasListas.xhtml?faces-redirect=true" />
+						<p:submenu label="Minha Conta">
+							<p:menuitem target="#{usuarioMB.usuario}"
+								value="Atualizar Meus Dados" update=":update"
+								oncomplete="PF('usuarioDialog').show()" />
+
+							<p:menuitem value="Minhas Listas"
+								outcome="/pages/protected/minhasListas.xhtml?faces-redirect=true" />
+							<p:menuitem value="Atualiza Dados do Cliente"
+								outcome="/pages/protected/atualizaDados.xhtml?faces-redirect=true" />
+						</p:submenu>
+
+						<p:menuitem value="Sair" action="#{loginMB.logOut}" />
+
+					</p:submenu>
+					<p:submenu label="Cadastros" rendered="true">
+						<p:menuitem value="Clientes"
+							outcome="/pages/protected/clientePesquisa.xhtml?faces-redirect=true" />
+						<p:menuitem value="Produtos"
+							outcome="/pages/protected/produtoPesquisa.xhtml?faces-redirect=true" />
+						<p:menuitem value="Supermercados"
+							outcome="/pages/protected/supermercadoPesquisa.xhtml?faces-redirect=true" />
+
+					</p:submenu>
+					<p:submenu label="Compras">
+						<p:menuitem value="Compras e buscas" />
+					</p:submenu>
+					<p:submenu label="Localizar Supermercados">
+						<p:menuitem value="Supermercados"
+							outcome="/pages/protected/supermercadoPesquisa.xhtml?faces-redirect=true" />
+					</p:submenu>
+				</p:panelMenu>
+
+			</h:form>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center" resizable="false" closable="false"
+			collapsible="false">
+			<ui:insert name="conteudo" />
+		</p:layoutUnit>
+	</p:layout>
+
+	<h:form id="update">
+		<p:dialog header="Alterar Meus Dados Cadastrais" closable="true" 
+			widgetVar="usuarioDialog" modal="false" showEffect="fade"
+			hideEffect="fade" resizable="false" height="500px">
+			<p:outputPanel id="usuarioDetail" style="width:0 auto">
+
+				<p:panelGrid columns="2" border="2" cellspacing="4" id="pgUsuario"
+					columnClasses="label,value">
+
+					<p:outputLabel value="Nome* " />
+					<p:inputText id="Nome" maxlength="30" required="true"
+						requiredMessage="O campo Nome não foi preenchido"
+						converterMessage="Preencha apenas com letras" autocomplete="true"
+						value="#{loginMB.usuarioLogado.nome}"
+						placeholder="Digite aqui seu nome" />
+
+					<p:outputLabel value="CPF* " />
+					<p:inputMask size="14" maxlength="14" required="true"
+						requiredMessage="O campo CPF não foi preenchido"
+						mask="999.999.999-99" readonly="true" disabled="true"
+						converterMessage="Preencha apenas com números"
+						value="#{loginMB.usuarioLogado.cpf}"
+						placeholder="Preencha seu CPF" />
+				</p:panelGrid>
+
+				<h3>Telefone</h3>
+
+				<p:panelGrid columns="2" border="4" cellspacing="4">
+					<p:outputLabel value="Telefone* " />
+					<p:inputMask maxlength="16" required="true" mask="(99) 9999-9999"
+						requiredMessage="O campo numero de telefone não foi preenchido"
+						converterMessage="Preencha apenas com números"
+						value="#{loginMB.usuarioLogado.telefone}" placeholder="Telefone" />
+
+					<p:outputLabel value="WhatsApp* " />
+					<p:inputMask maxlength="16" required="true" mask="(99) 9 9999-9999"
+						requiredMessage="O campo numero do WhatsApp não foi preenchido"
+						converterMessage="Preencha apenas com números"
+						value="#{loginMB.usuarioLogado.telefoneWhatsapp}"
+						placeholder="WhatsApp" />
+				</p:panelGrid>
+
+				<h3>Endereco</h3>
+
+				<p:panelGrid columns="4" cellpadding="5">
+					<p:outputLabel value="Logradouro* " />
+					<p:inputText maxlength="30" required="true"
+						requiredMessage="O campo Logradouro não foi preenchido"
+						converterMessage="Preencha apeenas com letras"
+						value="#{loginMB.usuarioLogado.endereco.logradouro}"
+						placeholder="Logradouro" />
+
+					<p:outputLabel value="Número* " />
+					<p:inputText size="5" maxlength="5" required="true"
+						requiredMessage="O campo Número não foi preenchido"
+						converterMessage="Preencha apeenas com numeros"
+						value="#{loginMB.usuarioLogado.endereco.numero}"
+						placeholder="Número" />
+
+					<p:outputLabel value="Complemento " />
+					<p:inputText maxlength="20" required="false"
+						converterMessage="Preencha apeenas com letras"
+						value="#{loginMB.usuarioLogado.endereco.complemento}"
+						placeholder="Complemento" />
+
+					<p:outputLabel value="Bairro* " />
+					<p:inputText size="10" maxlength="30" required="true"
+						requiredMessage="O campo Bairro não foi preenchido"
+						converterMessage="Preencha apeenas com letras"
+						value="#{loginMB.usuarioLogado.endereco.bairro}"
+						placeholder="Bairro" />
+
+					<p:outputLabel value="Cidade* " />
+					<p:inputText maxlength="20" required="true"
+						requiredMessage="O campo Cidade não foi preenchido"
+						converterMessage="Preencha apeenas com letras"
+						value="#{loginMB.usuarioLogado.endereco.cidade}"
+						placeholder="Cidade" />
+
+					<p:outputLabel value="Estado* " />
+					<p:selectOneMenu size="2" maxlength="2" required="true"
+						requiredMessage="O campo Estado não foi selecionado"
+						converterMessage="Selecione um campo"
+						value="#{loginMB.usuarioLogado.endereco.estado}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{usuarioMB.UFs}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="CEP* " />
+					<p:inputMask maxlength="10" required="true" mask="99.999-999"
+						requiredMessage="O campo CEP não foi preenchido"
+						converterMessage="preencha apenas com números"
+						value="#{loginMB.usuarioLogado.endereco.cep}" placeholder="CEP" />
+				</p:panelGrid>
+
+				<h3>Usuario</h3>
+
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Email* " />
+					<p:inputText maxlength="30" required="true"
+						requiredMessage="O campo Email não foi preenchido"
+						converterMessage="Preencha apenas com letras"
+						value="#{loginMB.usuarioLogado.email}"
+						placeholder="Preencha com seu email" />
+
+					<p:outputLabel value="Senha* " />
+					<p:inputText id="pass" type="password" maxlength="10"
+						required="true" feedback="true" weakLabel="Senha Muito Fácil"
+						goodLabel="Senha Razoável" strongLabel="Senha Difícil"
+						promptLabel="Favor digitar sua senha"
+						requiredMessage="O campo Senha não foi preenchido"
+						value="#{loginMB.usuarioLogado.senha}"
+						placeholder="Digite sua Senha" />
+				</p:panelGrid>
+
+				<br></br>
+				<br></br>
+
+				<p:panelGrid columns="2">
+					<f:facet name="footer">
+						<p:commandButton value="Salvar"
+							oncomplete="PF('usuarioDialog').hide()" icon="ui-icon-pencil"
+							actionListener="#{usuarioMB.alterar(usuario)}"
+							validateClient="true" /> &nbsp;&nbsp;
+
+						<p:commandButton value="Cancelar" immediate="true"
+							oncomplete="PF('usuarioDialog').hide()" icon="ui-icon-close" />
+					</f:facet>
+				</p:panelGrid>
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+	<p:growl autoUpdate="true" />
+</h:body>
+</html>

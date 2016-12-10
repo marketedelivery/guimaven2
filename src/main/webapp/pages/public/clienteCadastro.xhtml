@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/templates/modeloGeral.xhtml">
+<!-- 
+	<ui:define name="menu">
+		<ui:include src="/pages/includes/menuPrincipal.xhtml" />
+	</ui:define>
+ -->
+	<ui:define name="conteudo">
+		<h:form>
+
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Clientes" />
+				</f:facet>
+			</p:toolbar>
+			<p:panel id="panel">
+				<h:panelGrid id="pnlCadCliDados" columns="2">
+				Nome Completo<br />
+					<p:inputMask maxlength="30" size="32"
+						value="#{usuarioMB.usuario.nome}" required="true"
+						requiredMessage="Preencha o campo Nome" />
+
+					<!-- Comentada esta linha até corrigir no login inicial para cadastro		
+				Perfil<br />
+
+					<p:selectOneMenu id="perfil" value="#{usuarioMB.usuario.perfil}"
+						style="width:125px">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Administrador" itemValue="Administrador" />
+						<f:selectItem itemLabel="Usuario" itemValue="Usuario" />
+					</p:selectOneMenu>
+				  -->
+				  
+				CPF<br />
+					<p:inputMask maxlength="14" size="16"
+						value="#{usuarioMB.usuario.cpf}" mask="999.999.999-99"
+						required="true" requiredMessage="Preencha o campo CPF" />
+					
+				 
+				Telefone<br />
+					<p:inputMask maxlength="14" size="14"
+						value="#{usuarioMB.usuario.telefone}" mask="(99)9999-9999"
+					  requiredMessage="Preencha o campo Telefone" />
+					
+				 
+				Celular/WhatsAPP<br />
+					<p:inputMask maxlength="14" size="14"
+						value="#{usuarioMB.usuario.telefoneWhatsapp}"
+						mask="(99)99999-9999" required="true"
+						requiredMessage="Preencha o campo Celular" />
+				</h:panelGrid>
+				<p:separator />
+				<h:panelGrid id="pnlCadCliDados2" columns="4"> 
+ 				Cep<br />
+					<p:inputMask value="#{usuarioMB.endereco.cep}" required="true"
+						requiredMessage="Preencha o campo Cep" maxlength="9" size="10"
+						mask="99999-999" />
+				
+                 
+                Logradouro<br />
+					<p:inputText value="#{usuarioMB.endereco.logradouro}" size="50"
+						required="false" requiredMessage="Preencha o campo logradouro" />
+					
+				 
+                Número<br />
+                	 <h:inputText id="numero" value="#{usuarioMB.endereco.numero}" requiredMessage="Preencha o campo número"
+                     size="5" placeholder="Senha com 10 Digitos"/>
+                    
+					<!-- <p:inputMask value="#{usuarioMB.endereco.numero}" required="true"
+						requiredMessage="Preencha o campo número" maxlength="5" size="8"
+						mask="?99999" /> -->
+					
+                 
+                Complemento<br />
+					<p:inputText value="#{usuarioMB.endereco.complemento}"
+						required="false" requiredMessage="Preencha o campo complemento" />
+					
+                 
+                Bairro<br />
+					<p:inputText id="bairro" value="#{usuarioMB.endereco.bairro}" size="25"
+						required="true" label="bairro"
+						requiredMessage="Preencha o campo Bairro" />
+					
+                 
+				Cidade<br />
+					<p:inputText value="#{usuarioMB.endereco.cidade}"  size="50"
+					 required="true" requiredMessage="Preencha o campo cidade" />
+					
+                 
+                Estado<br />
+
+					<p:selectOneMenu id="estado" value="#{usuarioMB.endereco.estado}"
+						style="width:125px">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="AC" itemValue="AC" />
+						<f:selectItem itemLabel="AL" itemValue="AL" />
+						<f:selectItem itemLabel="AP" itemValue="AP" />
+						<f:selectItem itemLabel="AM" itemValue="AM" />
+						<f:selectItem itemLabel="BA" itemValue="BA" />
+						<f:selectItem itemLabel="CE" itemValue="CE" />
+						<f:selectItem itemLabel="DF" itemValue="DF" />
+						<f:selectItem itemLabel="ES" itemValue="ES" />
+						<f:selectItem itemLabel="GO" itemValue="GO" />
+						<f:selectItem itemLabel="MA" itemValue="MA" />
+						<f:selectItem itemLabel="MT" itemValue="MT" />
+						<f:selectItem itemLabel="MS" itemValue="MS" />
+						<f:selectItem itemLabel="MG" itemValue="MG" />
+						<f:selectItem itemLabel="PA" itemValue="PA" />
+						<f:selectItem itemLabel="PB" itemValue="PB" />
+						<f:selectItem itemLabel="PR" itemValue="PR" />
+						<f:selectItem itemLabel="PE" itemValue="PE" />
+						<f:selectItem itemLabel="PI" itemValue="PI" />
+						<f:selectItem itemLabel="RJ" itemValue="RJ" />
+						<f:selectItem itemLabel="RN" itemValue="RN" />
+						<f:selectItem itemLabel="RS" itemValue="RS" />
+						<f:selectItem itemLabel="RO" itemValue="RO" />
+						<f:selectItem itemLabel="RR" itemValue="RR" />
+						<f:selectItem itemLabel="SC" itemValue="SC" />
+						<f:selectItem itemLabel="SP" itemValue="SP" />
+						<f:selectItem itemLabel="SE" itemValue="SE" />
+						<f:selectItem itemLabel="TO" itemValue="TO" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p:separator />
+				<h:panelGrid>
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputText value="Insira seus dados de Usuário" />
+						</f:facet>
+					</p:toolbar>
+				 Digite seu E-mail<br />
+					<p:inputText id="email" value="#{usuarioMB.usuario.email}"
+						required="true" requiredMessage="Preencha o campo email" />
+
+					<h:outputText value="Digite sua Senha: " /> 
+					<p:password id="senha" value="#{usuarioMB.usuario.senha}" maxlength="10"
+						feedback="true" promptLabel="Digite sua Senha" weakLabel="Fraca"
+						placeholder="Senha com 10 Digitos" 
+						goodLabel="Regular" strongLabel="Forte" required="true"
+						requiredMessage="Preencha o campo senha" />
+
+					<h:outputText value="Confirmar Senha: " />
+					<p:password id="ConfirmaSenha" feedback="false" maxlength="10"
+						promptLabel="Redigite sua Senha" weakLabel="Fraca" 
+						placeholder="Senha com 10 Digitos"
+						goodLabel="Regular" strongLabel="Forte" required="true"
+						requiredMessage="Preencha o campo Confirmar senha" />
+
+				</h:panelGrid>
+			</p:panel>
+			<h:panelGrid columns="3">
+					<p:commandButton id="id1" value="Salvar"
+						action="#{usuarioMB.salvar}" icon="ui-icon-check"
+						validateClient="true" ajax="false" />
+
+					<p:commandButton process="@this" value="Voltar"
+						update="pnlCadCliDados"
+						action="/pages/public/login.xhtml?faces-redirect=true" />
+
+				</h:panelGrid>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+

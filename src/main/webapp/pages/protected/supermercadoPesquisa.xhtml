@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/templates/modeloGeral.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/pages/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event listener="#{supermercadoMB.carregarPesquisa}"
+				type="preRenderView" />
+
+		</f:metadata>
+	</ui:define>
+	<ui:define name="conteudo">
+	<script type="text/javascript">
+	$(document).ready(function(){
+		if( navigator.geolocation ){
+			navigator.geolocation.getCurrentPosition(success);
+		}
+		else
+		 $("p").html("HTML5 Not Supported");
+		
+	});
+	
+	function success(position){
+		var image = 'http://www.nikon-asia.com/resources/styles/24_WhereToBuy/images/google_streetview_icon.png';
+		var googleLatLng = new google.maps.LatLng(position.coords.latitude, 
+			  position.coords.longitude);
+		var latitude = position.coords.latitude;
+		var longitude =  position.coords.longitude;
+		origem = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+		addMarker(googleLatLng);
+		
+		
+	}
+	function addMarker(googleLatLng){
+		var image = 'http://www.nikon-asia.com/resources/styles/24_WhereToBuy/images/google_streetview_icon.png';
+		var markerOptn={
+			position 	:googleLatLng,
+			title		:"Eu estou aqui",   
+			icon        :image,
+			animation:google.maps.Animation.DROP
+		};
+	 	var marker = new google.maps.Marker(markerOptn);
+		PF('map').addOverlay(marker);
+	}	
+	</script>
+	
+	<p:layout fullPage="true" style="min-width:400px;min-height:520px;" gutter="0">
+            <p:layoutUnit position="top" style="min-width:400px;min-height:500px;" gutter="0">
+                <p:layout >
+                    <p:layoutUnit position="west" width="600" size="500" gutter="0">
+          <p:toolbar>
+			<f:facet name="left">
+				<h:outputText value="Localizaçâo dos Supermercados" />
+			</f:facet>
+		</p:toolbar>
+     <h:form id="form">
+    
+		<h:inputHidden id="json" value="#{supermercadoMB.retornaJsonComPosicaoUsuario}" />
+   		<p:commandButton value="Criar Rota para o Supermercado mais Próximo" onclick="calcRota();" />
+    </h:form>
+	
+	<h:form>
+	
+			<p:dataTable emptyMessage="Nenhum registro encontrado...."
+				value="#{supermercadoMB.listarTodosSupermercados}"
+				filteredValue="#{supermercadoMB.listaSupermercadosFiltrados}"
+				var="supermercado" rows="6" paginator="true">
+
+				<p:column headerText="Nome" filterBy="#{supermercado.nome}"
+					sortBy="#{supermercado.nome}">
+					<h:outputText value="#{supermercado.nome}" />
+				</p:column>
+				<p:column style="width:90px;text-align: center">
+					<p:commandButton value="Ver Promoção" update="formProm"
+						icon="ui-icon-search" title="View">
+						<f:setPropertyActionListener value="#{supermercado}"
+							target="#{supermercadoMB.supermercadoSelecionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	 </p:layoutUnit>
+	 
+	  <p:layoutUnit position="center" width="300" gutter="0">
+	  <div id="panel" style="overflow: auto;width: 240px;height: 280px;border:null;float:right;">
+			<p:outputPanel id="directionsPanel" styleClass="directionsPanel" style="width:200px;" layout="block"/>	
+	  </div>
+		
+	<h:form id="formGmap">
+		<p:gmap id="gmap" center="#{supermercadoMB.latPesquisa}, #{supermercadoMB.longPesquisa}" zoom="16"
+				type="ROADMAP" style="width:65%;height:280px" widgetVar="map" fitBounds="true"
+				model="#{supermercadoMB.retornaTresSuperProximoUser}" onPointClick="success(position);" />
+	</h:form>
+	
+	<h:form id="formProm">	
+		<p:carousel value="#{supermercadoMB.listaPromocao}" headerText="Promoções do Supermecado: #{supermercadoMB.supermercadoSelecionado.nome}" 
+		var="promocoes" itemStyle="hegth:130px;text-align:left" responsive="true">
+		
+		<p:panelGrid columns="2"  columnClasses="label,value" layout="grid">
+		
+		<f:facet name="header">
+                <p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+								height="90px" width="110px" rendered="true">
+								<f:param name="caminho" value="#{promocoes.imagem}" />
+				</p:graphicImage> <font></font>
+        </f:facet>
+            
+            <h:outputText value="#{promocoes.nome} #{promocoes.marca}" style="font-size:small" />
+            <h:outputText value="#{promocoes.valorUnitario} R$" style="font-size:small;"/>
+            
+            <h:outputText value="Desconto: " style="font-size:small"/>
+            <h:outputText value="#{promocoes.porcentagemDesconto}" style="font-size:small;color:red"/>
+            
+            <h:outputText value="Preço Promocional:" style="font-size:small" />
+            <h:outputText value="#{promocoes.precoPromocional} R$" style="font-size:small;color:red"/>
+		</p:panelGrid><font></font>
+		
+		</p:carousel>
+	</h:form>
+	 </p:layoutUnit>
+                </p:layout>
+            </p:layoutUnit>
+          
+        </p:layout>
+		
+	</ui:define>
+</ui:composition>

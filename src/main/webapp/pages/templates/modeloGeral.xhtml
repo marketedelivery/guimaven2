@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Market e Delivery</title>
+	<h:outputStylesheet library="css" name="estilos.css" />
+
+	   <h:outputScript library="js" name="meuScript.js" type="text/javascript"></h:outputScript> 
+	<h:outputScript library="js" name="jquery-3.1.1min.js"></h:outputScript>
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRdcsx3EG4n5nexRm9NRCf9hAmUYLEm98" />
+</h:head>
+<h:body>
+	<p:growl id="msgGlobal" sticky="true" />
+	<p:layout fullPage="true">
+
+
+		<p:layoutUnit position="north" resizable="false" closable="false"
+			style="background-color=white" collapsible="false">
+			<ui:insert name="menu"></ui:insert>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south"
+			header="Desenvolvido por Market e Delivery " resizable="false"
+			closable="false" collapsible="false">
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center" resizable="true" closable="false"
+			collapsible="false">
+			<ui:insert name="conteudo" />
+		</p:layoutUnit>
+	</p:layout>
+</h:body>
+</html>

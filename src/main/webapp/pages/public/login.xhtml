@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Market e Delivery</title>
+	<h:outputStylesheet library="css" name="estilos.css" />
+</h:head>
+<h:body>
+	<p:growl id="msgGlobal" sticky="false" />
+	<f:event listener="#{loginMB.iniciarServidor}" type="preRenderView"/>
+	<p:layout fullPage="true">
+		<p:layoutUnit header="Sistema para Gerenciamento de Compras"
+			position="north" resizable="false" closable="false"
+			collapsible="false">
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south"
+			header="Desenvolvido por Market e Delivery " resizable="false"
+			closable="false" collapsible="false">
+		</p:layoutUnit>
+
+		<p:layoutUnit position="west" size="280" resizable="false"
+			closable="false" collapsible="false">
+			<h:form>
+				<p:growl id="msg" showDetail="false" />
+				<h:panelGrid columns="2" cellpadding="5" style="text-align:left">
+				   Email
+					<p:inputText id="email" value="#{loginMB.usuario.email}"
+						required="false" label="username"
+						requiredMessage="Preencha o campo Email" maxlength="30"/>
+					
+				   Senha
+					<p:password id="senha" value="#{loginMB.usuario.senha}"
+						required="false" requiredMessage="Preencha o campo Senha"
+						label="password" maxlength="10"/>
+						
+					<p:commandButton value="Acessar" action="#{loginMB.efetuarLogin}"
+						ajax="false" validateClient="true" process="@this"/>
+
+					<p:commandButton value="Esqueceu a senha?" type="button"
+						onclick="PF('recuperaSenha').show();" />
+					<f:facet name="footer">
+					</f:facet>
+				</h:panelGrid>
+			</h:form>
+		<h:form id="formFacebook">
+				<!-- Botão de Login com Facebook -->
+			<div id="socialButtons">
+				<h:commandLink id="facebook" action="#{loginFacebookMB.conectarFacebook}">
+				<div class="login-facebook-link">
+					<p class="link-text">Login com Facebook</p>
+					<h:graphicImage value="/images/facebook_icon.png"/>
+				</div>
+					<f:setPropertyActionListener target="#{loginFacebookMB.providerID}" value="facebook" />
+					
+				</h:commandLink>
+			</div>
+		
+			</h:form>
+			<f:facet name="footer">
+			</f:facet>
+			<f:facet name="footer">
+				<p:link value=" Cadastre-se " update="growl"
+					outcome="/pages/public/clienteCadastro.xhtml?faces-redirect=true" />
+			</f:facet>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center" resizable="false" closable="false"
+			collapsible="false">
+			<h:graphicImage
+				value="/images/marketedelivery.jpg" rendered="true"
+				width="100%" height="99%">
+			</h:graphicImage>
+			<ui:insert name="conteudo" />
+		</p:layoutUnit>
+	</p:layout>
+
+	<p:dialog header="Recupera Senha" widgetVar="recuperaSenha"
+		showEffect="explode" hideEffect="bounce" height="200" width="300">
+		<h:form id="formDialog">
+			<p:growl id="msg2" sticky="false" />
+			<h:panelGrid captionClass="2" cellpadding="5">
+				<h:outputText value="Digite seu CPF: " />
+				<p:inputMask maxlength="11" size="14"
+					value="#{alterarSenhaMB.usuario.cpf}" mask="999.999.999-99"
+					required="true" requiredMessage="Preencha o CPF" />
+				<h:outputText value="Digite seu email de Usuario: " />
+				<p:inputText id="email" value="#{alterarSenhaMB.usuario.email}"
+					required="true" label="email do Usuario " style="width: 250px">
+					<f:validator validatorId="custom.emailValidator">
+					</f:validator>
+				</p:inputText>
+				<p:commandButton update="msg2" value=" enviar"
+					action="#{alterarSenhaMB.enviarSenhaUsuario}">
+				</p:commandButton>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>

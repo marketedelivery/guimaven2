@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/templates/modeloGeral.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/pages/includes/menuPrincipal.xhtml" />
+	</ui:define>
+	<ui:define name="conteudo">
+		<f:event listener="#{itemMB.listar}" type="preRenderView"></f:event>
+		<h:form id="form">
+			<h:panelGrid columns="2">
+			</h:panelGrid>
+			<p:growl id="msgGlobal" sticky="true" />
+			<h:form id="listaForm">
+				<f:param name="usuario" value="#{loginMB.usuarioLogado.codigo}" />
+				<p:fieldset id="pdtSupermercado" legend="Produto dos Supermercados">
+					<h:panelGrid columns="2">
+						<p:inputText id="nome" value="#{itemMB.listaCompras.nome}"
+							required="true" placeholder="Nome da Lista"
+							requiredMessage="Olá usuário, atribua um nome para sua lista" />
+
+						<p:selectOneMenu maxlength="9" required="true"
+							requiredMessage="O campo Tipo da Lista não foi selecionado"
+							value="#{itemMB.listaCompras.tipo}">
+							<f:selectItem noSelectionOption="true" itemLabel="Tipo da Lista" />
+							<f:selectItems value="#{listaMB.tipos}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="3">
+						<p:inputText value="#{produtoMB.produto.nome}"  size="52" maxlength="30"
+ 						placeholder="Digite aqui se desejar um produto ou marca especifico"/>
+ 						
+						<p:commandButton value="Pesquisar"  ajax="true" update="dataGrid"
+						actionListener="#{produtoMB.pesquisarProdutoLista}" />
+							
+						<p:commandButton update="dataGrid" value="Recarregar lista" ajax="true"
+							actionListener="#{produtoMB.recarregarLista}"/>
+					</h:panelGrid>
+
+					<br />
+
+					<p:dataGrid id ="dataGrid" columns="4" value="#{produtoMB.todosProdutos}"
+						layout="tabular" rows="12" paginator="true" var="produto" emptyMessage="Nenhum registro encontrado...."
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20,25,30,35,40,45,50">
+						<p:panel style="text-align: center">
+							<p:outputPanel style="margin:0 auto;">
+								<p:panelGrid>
+									<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+										height="60%" width="60%" rendered="true">
+										<f:param name="caminho" value="#{produto.imagem}" />
+									</p:graphicImage>
+								</p:panelGrid>
+								<p:outputLabel value="#{produto.nome}  #{produto.tipo}" />
+								<br />
+								<p:outputLabel value="#{produto.marca}" style="margin:0 auto;" />
+								<br />
+								<p:commandButton var="item" value=" Adicionar"
+									actionListener="#{itemMB.adicionar(produto)}" process="@this"
+									update=":form:listaForm:pdtSelecionado" />
+							</p:outputPanel>
+						</p:panel>
+					</p:dataGrid>
+				</p:fieldset>
+				<br />
+				<p:fieldset id="pdtSelecionado" legend="Produtos Selecionados">
+					<p:outputPanel id="dropArea">
+						<h:outputText value="Clique em adicionar e monte sua lista"
+							rendered="#{empty itemMB.listaProduto}" />
+
+						<p:dataTable id="produtosSelecionados" var="item"
+							value="#{itemMB.listaItens}" emptyMessage="Nenhum produto adicionado">
+
+							<p:column>
+								<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+									height="80px" width="80px" rendered="true">
+									<f:param name="caminho" value="#{item.produto.imagem}" />
+								</p:graphicImage>
+							</p:column>
+
+							<p:column headerText="Nome" filterBy="#{item.produto.nome}"
+								 sortBy="#{item.produto.nome}" filterValue="#{item.produto.nome}">
+								<h:outputText value="#{item.produto.nome}" />
+							</p:column>
+
+							<p:column headerText="Marca" filterBy="#{item.produto.marca}"
+								sortBy="#{item.produto.marca}">
+								<h:outputText value="#{item.produto.marca}" />
+							</p:column>
+							<p:column headerText="Tipo" filterBy="#{item.produto.tipo}"
+								sortBy="#{item.produto.nome.tipo}" filterValue="#{item.produto.tipo}">
+								<h:outputText value="#{item.produto.tipo}" />
+							</p:column>
+							<p:column headerText="Quantidade">
+								<p:spinner id="minMax" value="#{item.qtdProduto}" min="0"
+									max="100">									
+								</p:spinner>
+							</p:column>
+
+							<p:column headerText="Ação">
+								<p:commandButton var="item" value="remover"
+									actionListener="#{itemMB.remover(item)}"
+									update=":form:listaForm:pdtSelecionado" />
+							</p:column>
+							<f:facet name="footer">
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Valor Total da Lista:" />
+									<h:outputText value="" />
+								</h:panelGrid>
+
+							</f:facet>
+							<f:facet name="footer">
+								<p:commandButton value="Cadastrar Lista"
+									action="#{itemMB.criarLista}" />
+							</f:facet>
+						</p:dataTable>
+					</p:outputPanel>
+				</p:fieldset>
+				<p:commandButton value="Cancelar" process="@this"
+					action="/pages/protected/minhasListas.xhtml?faces-redirect=true" />
+			</h:form>
+		</h:form>
+	</ui:define>
+</ui:composition>

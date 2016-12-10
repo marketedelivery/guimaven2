@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/templates/modeloGeral.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/pages/includes/menuPrincipal.xhtml" />
+	</ui:define>
+	<ui:define name="conteudo">
+	<script type="text/javascript">
+	$(document).ready(function(){
+			if( navigator.geolocation ){
+				navigator.geolocation.getCurrentPosition(success, fail);
+			}
+		else
+			 $("p").html("Localização do usuario não encontrada");
+	});
+	function success(position)
+	{	var googleLatLng = new google.maps.LatLng(position.coords.latitude, 
+			  position.coords.longitude);
+		var latitude = position.coords.latitude;
+		var longitude =  position.coords.longitude;
+		point([{name:'latitude',value:latitude},{name:'longitude',value:longitude}]);
+		onPoint([{name:'latitude',value:latitude},{name:'longitude',value:longitude}]);
+	}
+	</script>
+		<h:form id="form">
+			<!-- este atributo passa a localição do usuario para o bean supermecado -->
+			<p:remoteCommand name="onPoint"  actionListener="#{supermercadoMB.onPointSelect}" autoRun="true" />
+			<p:remoteCommand name="point" actionListener="#{compararPrecosMB.pointSelect}" autoRun="true" />
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Minhas Listas" />
+				</f:facet>
+			</p:toolbar>
+			<br></br>
+
+			<h:panelGrid columns="6" id="pgUsuario" columnClasses="label,value">
+
+				<p:outputLabel value="Olá,Seja Bem Vindo " />
+				<p:outputLabel value="#{loginMB.usuarioLogado.nome}" />
+				<p:outputLabel value="#{listaMB.lista.nome}" />
+
+			</h:panelGrid>
+			<h3 style="margin-top: 0"></h3>
+			<p:separator />
+
+			<p:dataTable id="table" emptyMessage="Nenhum registro encontrado...."
+				value="#{listaMB.listarTodos}"
+				filteredValue="#{listaMB.listaFiltrados}" var="lista" rows="10"
+				paginator="true">
+
+				<f:facet name="footer">
+					<p:commandButton value="Nova Lista"
+						action="/pages/public/lista.xhtml?faces-redirect=true" />
+				</f:facet>
+
+				<p:column headerText="Nome" filterBy="#{lista.nome}"
+					sortBy="#{lista.nome}">
+					<h:outputText value="#{lista.nome}" />
+				</p:column>
+
+				<p:column headerText="Tipo">
+					<h:outputText value="#{lista.tipo}" />
+				</p:column>
+
+				<p:column headerText="Lista Criada">
+					<h:outputText value="#{lista.dataCriacao}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Itens" id="qtd">
+					<h:outputText value="#{lista.qtd}" />
+				</p:column>
+
+				<p:column headerText="Ações">
+					<p:commandButton id="editar" update=":updateLista"
+						oncomplete="PF('listaDialog').show()" icon="ui-icon-pencil">
+						<f:setPropertyActionListener value="#{lista}"
+							target="#{itemMB.lista}" />
+						<p:tooltip for="editar">Alterar Lista</p:tooltip>
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash" id="excluir"
+						oncomplete="PF('listaExcluirDialog').show()"
+						style="margin-left: 5px; margin-right: 5px;">
+						<f:setPropertyActionListener value="#{lista}"
+							target="#{itemMB.lista}" />
+						<p:tooltip for="excluir">Excluir Lista</p:tooltip>
+					</p:commandButton>
+					<p:commandButton id="compararPreco" update=":updateCompara" onstart="PF('carregar').show()" onsuccess="PF('carregar').hide()"
+						oncomplete="PF('listaDialog2').show()" icon="ui-icon-cart">
+						<f:setPropertyActionListener value="#{lista}"
+							target="#{compararPrecosMB.lista}" />
+						<p:tooltip for="compararPreco">Comparar Preços</p:tooltip>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	<p:dialog widgetVar="carregar" draggable="false" closable="false" resizable="false" showHeader="false"> 
+		<h:graphicImage value="/images/ajax-loader.gif"  rendered="true"/>
+	</p:dialog>
+		<h:form id="updateLista">
+			<p:dialog header="Alterar Lista" widgetVar="listaDialog"
+				modal="false" showEffect="fade" hideEffect="fade" resizable="false"
+				width="480px" height="400px">
+				<p:outputPanel id="listaDetail" style="width:0 auto">
+					<p:panelGrid columns="3" columnClasses="label,value">
+						<p:panelGrid columns="2" id="pgLista" columnClasses="label,value">
+							<p:outputLabel value="Nome* " />
+							<p:inputText id="Nome" maxlength="30" required="true"
+								requiredMessage="O campo Nome não foi preenchido"
+								converterMessage="Preencha apenas com letras"
+								autocomplete="true" value="#{itemMB.lista.nome}"
+								placeholder="Nome da Lista" />
+
+							<p:outputLabel value="Tipo* " />
+							<p:inputText id="Tipo" maxlength="30" required="true"
+								requiredMessage="O campo Tipo não foi preenchido"
+								converterMessage="Preencha apenas com letras"
+								autocomplete="true" value="#{itemMB.lista.tipo}"
+								placeholder="Tipo da Lista" />
+
+							<p:outputLabel value="Data de Criação* " />
+							<p:calendar id="maskCalendar" size="10" maxlength="10"
+								required="true"
+								requiredMessage="O campo data de Criação não foi preenchido"
+								converterMessage="Preencha com apenas números"
+								value="#{itemMB.lista.dataCriacao}" pattern="dd/MM/yyyy"
+								mask="true" mindate="01/01/1920" maxdate="Calendar.Today()"
+								effect="slide" placeholder="dd/MM/aaaa">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:calendar>
+						</p:panelGrid>
+						<iframe
+							src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2Fmarketedelivery.com.br%2Flayout=button_count%2Fsize=small%2Fmobile_iframe=true%2FappId=1150699848342269%2Fwidth=107%2Fheight=20"
+							width="107" height="20"
+							style="border: none; overflow: hidden; margin-left: 70px;"
+							scrolling="no" frameborder="0" allowTransparency="true" />
+					</p:panelGrid>
+					<br />
+
+					<p:dataTable id="tbItem" scrollable="true" frozenRows="0" rows="5"
+						value="#{itemMB.itensDialog}" paginator="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20" emptyMessage="Não há produtos salvos"
+						var="item" style="width:0 auto">
+						<p:column headerText="Imagem" style="width: 100px">
+							<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+								height="80px" width="80px" rendered="true">
+								<f:param name="caminho" value="#{item.produto.imagem}" />
+							</p:graphicImage>
+						</p:column>
+
+						<p:column headerText="Nome" style="width: 45px">
+							<h:outputText value="#{item.produto.nome}" />
+						</p:column>
+
+						<p:column headerText="Tipo" style="width: 45px">
+							<h:outputText value="#{item.produto.tipo}" />
+						</p:column>
+
+						<p:column headerText="Marca" style="width: 45px">
+							<h:outputText value="#{item.produto.marca}" />
+						</p:column>
+
+						<p:column headerText="Quantidade" width="45px">
+							<p:spinner size="5" id="minMax" value="#{item.qtdProduto}"
+								min="0" max="100">
+							</p:spinner>
+						</p:column>
+						<p:column headerText="Ação" style="width: 20px">
+							<p:commandButton id="excluirItem" icon="ui-icon-trash"
+								actionListener="#{itemMB.removerItem(item)}"
+								oncomplete="PF('listaDialog').show()"
+								update=":form:table, :form:table:qtd, :updateLista, tbItem" />
+							<p:tooltip for="excluirItem">Excluir Item</p:tooltip>
+						</p:column>
+					</p:dataTable>
+
+					<br />
+
+					<p:panelGrid columns="2">
+						<f:facet name="footer">
+							<p:commandButton value="Salvar"
+								oncomplete="PF('listaDialog').hide()" icon="ui-icon-pencil"
+								actionListener="#{itemMB.alterarLista(item)}"
+								validateClient="true" update="form:table, tbItem" /> &nbsp;&nbsp;
+
+						<p:commandButton value="Fechar" immediate="true"
+								oncomplete="PF('listaDialog').hide()" icon="ui-icon-close" />
+						</f:facet>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="remover">
+			<p:dialog id="listaExcluirDialog" showEffect="fade" modal="false"
+				resizable="false" hideEffect="fade" header="Remover Lista"
+				severity="alert" widgetVar="listaExcluirDialog">
+				<p:outputLabel value="Tem certeza que quer remover essa lista?" />
+				<br />
+				<br />
+				<p:commandButton ajax="true" id="excluirLista" value="Sim"
+					oncomplete="PF('listaExcluirDialog').hide()"
+					action="#{itemMB.removerLista(item)}" update=":form, :form:table" />
+
+				<p:commandButton id="declineExcluir" value="Fechar"
+					onclick="PF('listaExcluirDialog').hide()" type="button" />
+			</p:dialog>
+		</h:form>
+
+		<!-- ============================== Tela de Comparar Preços ====================================== -->
+
+		<h:form id="updateCompara">
+			<p:dialog header="Comparar Preços" widgetVar="listaDialog2"
+				closable="false" modal="false" showEffect="fade" hideEffect="fade"
+				resizable="false" width="800px" height="0 auto">
+				<p:outputPanel id="listaDetail" style="width:0 auto">
+					<p:panelGrid columns="2" border="2" cellspacing="4" id="pgLista"
+						columnClasses="label,value">
+
+						<p:outputLabel value="Nome* " />
+						<p:inputText id="Nome" maxlength="30" required="true"
+							requiredMessage="O campo Nome não foi preenchido"
+							converterMessage="Preencha apenas com letras" autocomplete="true"
+							value="#{compararPrecosMB.lista.nome}"
+							placeholder="Nome da Lista" />
+
+						<p:outputLabel value="Tipo* " />
+						<p:inputText id="Tipo" maxlength="30" required="true"
+							requiredMessage="O campo Tipo não foi preenchido"
+							converterMessage="Preencha apenas com letras" autocomplete="true"
+							value="#{compararPrecosMB.lista.tipo}"
+							placeholder="Tipo da Lista" />
+
+						<p:outputLabel value="Data de Criação* " />
+						<p:calendar id="maskCalendar" size="10" maxlength="10"
+							required="true"
+							requiredMessage="O campo data de Criação não foi preenchido"
+							converterMessage="Preencha com apenas números"
+							value="#{compararPrecosMB.lista.dataCriacao}"
+							pattern="dd/MM/yyyy" mask="true" mindate="01/01/1920"
+							maxdate="Calendar.Today()" effect="slide"
+							placeholder="dd/MM/aaaa">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:calendar>
+					</p:panelGrid>
+					<br />
+					<h:form>
+						<p:toolbar>
+							<f:facet name="left">
+								<h:outputText value="Supermercados" style="font-size: 10pt" />
+							</f:facet>
+						</p:toolbar>
+
+						<p:dataTable emptyMessage="Nenhum registro encontrado...."
+							ariaRowLabel="Supers" value="#{compararPrecosMB.pedidos}"
+							filteredValue="#{compararPrecosMB.pedidosFiltrados}"
+							id="tbPedidos" var="pedido">
+							<p:column headerText="Supermercado"
+								style="width:90px;text-align: center;">
+								<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+									height="60px" width="60px" rendered="true">
+									<f:param name="caminho"
+										value="#{pedido.supermercado.logoimage}" />
+								</p:graphicImage><br />
+								<h:outputText value="#{pedido.supermercado.nome}" />
+								
+							</p:column>
+							<p:column headerText="Itens Disponiveis"
+								style="width:70px; text-align: center;">
+								<p:commandLink id="ItensDisponiveisLink"
+									value="#{pedido.qtdDisponiveis}%"
+									update=":itensDisponiveisDialog"
+									oncomplete="PF('itensDisponiveisDialog').show()">
+									<f:setPropertyActionListener value="#{pedido}"
+										target="#{compararPrecosMB.pedidoSelecionado}" />
+								</p:commandLink>
+							</p:column>
+							<p:column headerText="Itens Indisponiveis"
+								style="width:70px; text-align: center; ">
+								<p:commandLink value="#{pedido.qtdIndisponiveis}%"
+									update=":itensIndisponiveisDialog"
+									oncomplete="PF('itensIndisponiveisDialog').show()">
+									<f:setPropertyActionListener value="#{pedido}"
+										target="#{compararPrecosMB.pedidoSelecionado}" />
+								</p:commandLink>
+							</p:column>
+							<p:column headerText="Distância"
+								style="width:70px; text-align: center;">
+								<h:outputText value="#{pedido.distancia} km" />
+							</p:column>
+							<p:column headerText="Valor Total"
+								style="width:70px; text-align: center;">
+								<h:outputText value="#{pedido.valorTotalPedido}" />
+							</p:column>
+							<p:column headerText="Realizar Compra" style="width: 70px">
+							<form id="_xclick" action="https://www.sandbox.paypal.com/cgi-nin/webscr"  method="post">
+								<input type="hidden"  name="cmd" value="_xclick"/>
+								<input type="hidden" name="business" value="${initParam['business']}"/>
+								<input type="hidden" name="lc" value="BR"/>
+								<input type="hidden" name="item_name"  value="#{compararPrecosMB.lista.nome}"/>
+								<input type="hidden" name="amount" value="#{pedido.valorTotalPedido}"/>
+								<input type="hidden" name="currency_code" value="BRL"/>
+								<input type="hidden" name="button_subtype" value="services"/>
+								<input type="hidden" name="no_note" value="0"/>
+								<input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHostedGuest"/>
+								<input type="image" src="https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_buynowCC_LG.gif" alt="PayPal - pagamentos online!" />
+								<input type="hidden" name="return" value="${initParam['returnurl']}"/>
+							</form>
+						</p:column>
+						</p:dataTable>
+					</h:form>
+					<br />
+					<br />
+					<p:panelGrid columns="2">
+						<f:facet name="footer">
+							<p:commandButton value="Fechar" immediate="true"
+								update=":form:table" oncomplete="PF('listaDialog2').hide()"
+								icon="ui-icon-close" />
+						</f:facet>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+		<!-- ===============================Itens Disponíveis=============================================== -->
+
+		<h:form id="itensDisponiveisDialog">
+			<p:dialog header="Itens Disponiveis" closable="false"
+				widgetVar="itensDisponiveisDialog" modal="false" showEffect="fade"
+				hideEffect="fade" resizable="false" width="430px">
+				<p:outputPanel id="disponiveisDetail" style="width:0 auto">
+					<p:dataTable id="tbItensDisponiveis" scrollable="true"
+						frozenRows="0" rows="5"
+						value="#{compararPrecosMB.pedidoSelecionado.itensDisponiveis}"
+						paginator="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5"
+						emptyMessage="Não há itens disponíveis salvos" var="idisponivel"
+						style="width:0 auto">
+						<p:column headerText="Imagem" style="width: 100px">
+							<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+								height="80px" width="80px" rendered="true">
+								<f:param name="caminho" value="#{idisponivel.produto.imagem}" />
+							</p:graphicImage>
+						</p:column>
+
+						<p:column headerText="Nome" style="width: 45px">
+							<h:outputText value="#{idisponivel.produto.nome}" />
+						</p:column>
+
+						<p:column headerText="Tipo" style="width: 45px">
+							<h:outputText value="#{idisponivel.produto.tipo}" />
+						</p:column>
+
+						<p:column headerText="Marca" style="width: 45px">
+							<h:outputText value="#{idisponivel.produto.marca}" />
+						</p:column>
+
+						<p:column headerText="Quantidade" width="45px"
+							style="text-align: center">
+							<p:outputLabel style="text-align: center"
+								value="#{idisponivel.qtdProduto}" />
+						</p:column>
+						
+					</p:dataTable>
+					<br />
+					<p:panelGrid columns="2">
+						<f:facet name="footer">
+							<p:commandButton value="Fechar" immediate="true"
+								update=":form:table"
+								oncomplete="PF('itensDisponiveisDialog').hide()"
+								icon="ui-icon-close" />
+						</f:facet>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+		<!-- =============================Fim Itens Disponíveis============================================= -->
+
+		<!-- ===============================Itens Indisponíveis=============================================== -->
+		<h:form id="itensIndisponiveisDialog">
+			<p:dialog header="Itens Indisponiveis" closable="false"
+				widgetVar="itensIndisponiveisDialog" modal="false" showEffect="fade"
+				hideEffect="fade" resizable="false" width="430px">
+				<p:outputPanel id="indisponiveisDetail" style="width:0 auto">
+					<p:dataTable id="tbItensIndisponiveis" scrollable="true"
+						ariaRowLabel="Itens" frozenRows="0" rows="5"
+						value="#{compararPrecosMB.pedidoSelecionado.itensIndisponiveis}"
+						paginator="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5"
+						emptyMessage="Não há itens indisponíveis salvos"
+						var="iindisponivel" style="width:0 auto">
+						<p:column headerText="Imagem" style="width: 80px">
+							<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+								height="80px" width="80px" rendered="true">
+								<f:param name="caminho" value="#{iindisponivel.produto.imagem}" />
+							</p:graphicImage>
+						</p:column>
+
+						<p:column headerText="Nome" style="width: 45px">
+							<h:outputText value="#{iindisponivel.produto.nome}" />
+						</p:column>
+
+						<p:column headerText="Tipo" style="width: 45px">
+							<h:outputText value="#{iindisponivel.produto.tipo}" />
+						</p:column>
+
+						<p:column headerText="Marca" style="width: 45px">
+							<h:outputText value="#{iindisponivel.produto.marca}" />
+						</p:column>
+
+						<p:column headerText="Quantidade" width="45px"
+							style="text-align: center">
+							<p:outputLabel value="#{iindisponivel.qtdProduto}" />
+						</p:column>
+					</p:dataTable>
+					<br />
+					<p:panelGrid columns="2">
+						<f:facet name="footer">
+							<p:commandButton value="Fechar" immediate="true"
+								update=":form:table"
+								oncomplete="PF('itensIndisponiveisDialog').hide()"
+								icon="ui-icon-close" />
+						</f:facet>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+		<!-- =============================================================================================== -->
+		<p:growl autoUpdate="true" />
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/templates/modeloGeral.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/pages/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form>
+
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Supermercados" />
+				</f:facet>
+			</p:toolbar>
+
+			<h:panelGrid columns="4">
+				<p:outputLabel value="Código:" />
+				<p:inputText readonly="true" size="10"
+					value="#{supermercadoBean.supermercadoCadastro.codigo}" />
+
+				<p:outputLabel value="Nome:" />
+				<p:inputText maxlength="50" size="80"
+					value="#{supermercadoBean.supermercadoCadastro.nome}">
+
+				</p:inputText>
+
+				<p:outputLabel value="CNPJ:" />
+				<p:inputText maxlength="50" size="30"
+					value="#{supermercadoBean.supermercadoCadastro.cnpj}" />
+
+				<p:outputLabel value="Inscrição Estadual:" />
+				<p:inputText maxlength="50" size="30"
+					value="#{supermercadoBean.supermercadoCadastro.inscricaoEstadual}" />
+
+				<p:outputLabel value="Telefone:" />
+				<p:inputText maxlength="30" size="10"
+					value="#{supermercadoBean.supermercadoCadastro.telefone}" />
+
+				<p:outputLabel value="Email:" />
+				<p:inputText maxlength="50" size="30"
+					value="#{supermercadoBean.supermercadoCadastro.email}" />
+
+			</h:panelGrid>
+
+
+			<h:panelGrid columns="3">
+				<p:commandButton value="Novo" />
+				<p:commandButton value="Salvar"
+					actionListener="#{supermercadoBean.salvar}" update=":msgGlobal" />
+				<p:commandButton value="Voltar"
+					action="/pages/protected/supermercadoPesquisa.xhtml?faces-redirect=true" />
+			</h:panelGrid>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

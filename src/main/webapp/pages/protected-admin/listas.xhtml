@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+	
+	
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Market e Delivery - Lista</title>
+		<h:outputStylesheet library="css" name="estilos.css" />
+		<style>
+			body {
+				background-image: url("https://images.endeavor.org.br/uploads/2016/04/produto.jpg");
+				background-repeat:no-repeat;
+				background-attachment:fixed;
+				background-position: inherit;
+ 				background-size: cover; 
+     					-webkit-background-size: cover; /* SAFARI / CHROME */
+       					 -moz-background-size: cover; /* FIREFOX */ 
+       					 -ms-background-size: cover; /* IE */ 
+         				 -o-background-size: cover; /* OPERA */
+         				 
+	  		 }
+		</style>
+	</h:head>
+	<body>
+	<p:layoutUnit position="north" resizable="false" closable="false" 
+			style="" collapsible="false" >
+	</p:layoutUnit>
+	<h:outputText value="Pesquipar por:"/>
+	
+
+		<f:event listener="#{listaMB.listarListas}" type="preRenderView"/>
+		
+		<p:fieldset>
+				<p:dataTable emptyMessage="Nenhumh: registro encontrado...."
+				value="#{listaMB.todasAsListas}"
+				filteredValue="#{listaMB.listaFiltrados}" var="lista"
+				rows="6" paginator="true">
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						action="/pages/public/lista.xhtml?faces-redirect=true" />
+				</f:facet>
+
+				<p:column headerText="Nome" filterBy="#{lista.nome}"
+					sortBy="#{lista.nome}">
+					<h:outputText value="#{lista.nome}" />
+				</p:column>
+				
+				<p:column headerText="Tipo">
+					<h:outputText value="#{lista.tipo}" />
+				</p:column>
+
+				<p:column headerText="Lista Criada">
+					<h:outputText value="#{lista.dataCriacao}" />
+				</p:column>
+				
+				<p:column headerText="Ação">
+					<p:commandButton value="Editar"/>
+					<p:commandButton value="Excluir" action="#{listaMB.remover(lista)}" 
+					 update="@this" process="@this"/>
+				</p:column>
+			</p:dataTable>
+				
+		</p:fieldset>
+		
+		<p:layoutUnit position="south"
+			resizable="false" closable="false" collapsible="false">
+		</p:layoutUnit>
+	</body>
+</html>

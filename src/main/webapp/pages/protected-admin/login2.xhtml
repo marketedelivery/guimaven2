@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Market e Delivery</title>
+	<h:outputStylesheet library="css" name="estilos.css" />
+	<style>
+			body
+			{
+				background-image: url("http://s2.glbimg.com/7-hknclnun_oevh51dxuplLsLdg=/e.glbimg.com/og/ed/f/original/2015/09/28/supermercado.jpg");
+				background-repeat:no-repeat;
+				background-attachment:fixed;
+ 				background-size: cover; 
+     					-webkit-background-size: cover; /* SAFARI / CHROME */
+       					 -moz-background-size: cover; /* FIREFOX */ 
+       					 -ms-background-size: cover; /* IE */ 
+         				 -o-background-size: cover; /* OPERA */
+ 
+			}
+	</style>
+</h:head>
+<h:body>
+	
+	<h1>Market E Delivery</h1>
+	<font color="#6495ED">E-Mail</font><br />
+	<h:inputText  value="#{loginMB.usuario.email}"/> <br />  
+	<font color="#6495ED">Senha</font><br />
+	<h:inputText value="#{loginMB.usuario.senha}" required="true"
+	requiredMessage="Campo Senha vazio"/> <br /><br />
+	<p:commandButton value="Logar" action="#{loginMB.efetuarLogin}" process="@this"/>
+	
+</h:body>
+</html>

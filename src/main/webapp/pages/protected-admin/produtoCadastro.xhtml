@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/pages/templates/modeloGeral.xhtml">
+	<ui:define name="conteudo">
+		<f:event listener="#{produtoMB.listar}" type="preRenderView"></f:event>
+		<h:form id="formCadastroProdutoAdministrativo"
+			enctype="multipart/form-data">
+			<p:growl autoUpdate="true" />
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Produtos" />
+				</f:facet>
+			</p:toolbar>
+
+			<h:panelGrid columns="1">
+				<p:outputLabel value="Nome" />
+				<p:inputText value="#{produtoMB.produto.nome}" maxlength="50"
+					size="60" />
+
+				<p:outputLabel value="Marca:" />
+				<p:inputText value="#{produtoMB.produto.marca}" maxlength="50"
+					size="60" />
+
+				<p:outputLabel value="Quantidade em Estoque:" />
+				<p:inputText value="#{produtoMB.produto.qtdEstoque}" maxlength="9"
+					size="12" />
+
+				<p:outputLabel value="Tipo:" />
+				<p:inputText value="#{produtoMB.produto.tipo}" maxlength="12"
+					size="12" />
+
+				<p:outputLabel value="Valor Unitário:" />
+				<p:inputText value="#{produtoMB.produto.valorUnitario}"
+					maxlength="9" size="12" />
+
+				<p:outputLabel value="Supermercado" />
+				<p:selectOneMenu value="#{produtoMB.produto.supermercado}"
+					converter="supermercadoConverter">
+					<f:selectItem noSelectionOption="true"
+						itemLabel="Selecione um supermercado" itemValue="-1" />
+					<f:selectItems value="#{produtoMB.listarTodosSupermercado}"
+						var="supermercado" itemValue="#{supermercado}"
+						itemLabel="#{supermercdo.nome}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<p:outputLabel for="upload" value="Imagem do Produto" />
+				<p:fileUpload id="upload" mode="advanced" auto="true"
+					fileUploadListener="#{produtoMB.uploadFoto}"
+					update=":formCadastroProdutoAdministrativo:foto" />
+
+				<p:outputLabel for="foto" value="Foto Carregada" />
+				<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+					height="30%">
+					<f:param name="caminho" value="#{produtoMB.produto.caminhoImagem}" />
+				</p:graphicImage>
+			</h:panelGrid>
+
+			<h:panelGrid columns="3">
+				<p:commandButton value="Cadastrar"
+					actionListener="#{produtoMB.cadastrarProduto}"
+					update="formCadastroProdutoAdministrativo" />
+				<p:commandButton value="Cancelar"
+					action="/pages/protected/produtoPesquisa.xhtml?faces-redirect=true" />
+			</h:panelGrid>
+
+			<br />
+
+			<p:dataGrid columns="5" value="#{produtoMB.carregarProduto}"
+				layout="tabular" rows="12" paginator="true" var="produto"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="6,12,16">
+				<p:panel header="#{produto.nome}">
+					<p:panelGrid columns="1">
+						<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+							height="20%">
+							<f:param name="caminho" value="#{produto.imagem}" />
+						</p:graphicImage>
+					</p:panelGrid>
+
+					<p:panelGrid columns="2">
+						<h:outputText value="Tipo:" />
+						<p:outputLabel value="#{produto.tipo}" />
+						<h:outputText value="Marca:" />
+						<p:outputLabel value="#{produto.marca}" />
+					</p:panelGrid>
+				</p:panel>
+			</p:dataGrid>
+
+			<p:dataTable id="tabela"
+				emptyMessage="Nenhum registro encontrado...."
+				value="#{produtoMB.carregarProduto}"
+				filteredValue="#{produtoMB.produtosFiltrados}" var="produto"
+				rows="12" paginator="true">
+
+				<p:column>
+					<p:graphicImage id="foto" value="#{imageBean.fotoCarregada}"
+						height="20%">
+						<f:param name="caminho" value="#{produto.imagem}" />
+					</p:graphicImage>
+				</p:column>
+				<p:column headerText="Codigo" filterBy="#{produto.codigo}"
+					sortBy="#{produto.codigo}">
+					<h:outputText value="#{produto.codigo}" />
+				</p:column>
+				<p:column headerText="Nome" filterBy="#{produto.nome}"
+					sortBy="#{produto.nome}">
+					<h:outputText value="#{produto.nome}" />
+				</p:column>
+				<p:column headerText="Tipo" filterBy="#{produto.tipo}"
+					sortBy="#{produto.tipo}">
+					<h:outputText value="#{produto.tipo}" />
+				</p:column>
+				<p:column headerText="Marca" filterBy="#{produto.marca}"
+					sortBy="#{produto.marca}">
+					<h:outputText value="#{produto.marca}" />
+				</p:column>
+				<p:column headerText="Supermercado">
+					<h:outputText value="#{produto.supermercado.nome}" />
+				</p:column>
+				<p:column headerText="Ações">
+					<p:commandButton var="produto" icon="ui-icon-trash"
+						action="#{produtoMB.remover(produto)}"
+						update="formCadastroProdutoAdministrativo" />
+
+					<p:commandButton id="editar" update="tabela, :update"
+						oncomplete="PF('produtoDialog').show()" icon="ui-icon-pencil">
+						<f:setPropertyActionListener value="#{produto}"
+							target="#{produtoMB.produto}" />
+						<p:tooltip for="editar">Alterar</p:tooltip>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+
+
+		<h:form id="update">
+			<p:dialog header="Alterar Produto" widgetVar="produtoDialog"
+				modal="false" showEffect="fade" hideEffect="fade" resizable="false"
+				height="400px">
+				<p:outputPanel id="produtoDetail" style="width:0 auto">
+
+					<p:panelGrid columns="2" border="2" columnClasses="label,value">
+						<p:outputLabel value="Código " />
+						<p:inputText readonly="true" disabled="true"
+							value="#{produtoMB.produto.codigo}" />
+					</p:panelGrid>
+
+					<br />
+
+					<p:panelGrid columns="1">
+						<p:graphicImage id="fotoAlterar"
+							value="#{imageBean.fotoCarregada}" height="20%">
+							<f:param name="caminho" value="#{produto.imagem}" />
+						</p:graphicImage>
+					</p:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:outputLabel for="uploadAlterar" value="Alterar Imagem" />
+						<p:fileUpload id="uploadAlterar" mode="advanced" auto="true"
+							fileUploadListener="#{produtoMB.uploadFoto}"
+							update=":formCadastroProdutoAdministrativo:foto, :update" />
+					</h:panelGrid>
+
+					<p:panelGrid columns="2" border="2" cellspacing="4" id="pgProduto"
+						columnClasses="label,value">
+
+						<p:outputLabel value="Nome* " />
+						<p:inputText id="Nome" maxlength="30" required="true"
+							requiredMessage="O campo Nome não foi preenchido"
+							converterMessage="Preencha apenas com letras" autocomplete="true"
+							value="#{produtoMB.produto.nome}" placeholder="Nome do Produto" />
+
+						<p:outputLabel value="Tipo* " />
+						<p:inputMask size="30" maxlength="30" required="true"
+							requiredMessage="O campo Tipo não foi preenchido"
+							converterMessage="Preencha apenas com letras"
+							value="#{produtoMB.produto.tipo}" placeholder="Tipo do Produto" />
+
+						<p:outputLabel value="Marca* " />
+						<p:inputText maxlength="30" required="true"
+							requiredMessage="O campo Marca não foi preenchido"
+							converterMessage="Preencha apenas com letras"
+							value="#{produtoMB.produto.marca}" placeholder="Marca" />
+					</p:panelGrid>
+
+					<br></br>
+					<br></br>
+
+					<p:panelGrid columns="2">
+						<f:facet name="footer">
+							<p:commandButton value="Salvar"
+								oncomplete="PF('produtoDialog').hide()" icon="ui-icon-pencil"
+								actionListener="#{produtoMB.alterarProduto(produto)}"
+								validateClient="true" update="formCadastroProdutoAdministrativo" /> &nbsp;&nbsp;
+
+						<p:commandButton value="Cancelar" immediate="true"
+								oncomplete="PF('produtoDialog').hide()" icon="ui-icon-close" />
+						</f:facet>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+		<p:growl autoUpdate="true" />
+	</ui:define>
+</ui:composition>
+</html>
